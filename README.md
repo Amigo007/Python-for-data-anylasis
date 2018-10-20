@@ -1,3 +1,3 @@
-# Python-for-data-anylasis
+# Python-for-data-analysis
 
 several data analysis codes
