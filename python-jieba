@@ -1,0 +1,49 @@
+
+
+
+
+# -*- coding: UTF-8 -*-
+import numpy as np
+import pandas as pd
+import jieba
+import jieba.analyse
+import codecs
+
+#设置pd的显示长度
+pd.set_option('max_colwidth',500)
+
+#载入数据
+rows=pd.read_csv('datas1.csv', header=0,encoding='utf-8',dtype=str)
+
+segments = []
+for index, row in rows.iterrows():
+    content = row[2]
+    #TextRank 关键词抽取，只获取固定词性
+    words = jieba.analyse.textrank(content, topK=50,withWeight=False,allowPOS=('ns', 'n', 'vn', 'v'))
+    splitedStr = ''
+    for word in words:
+        # 记录全局分词
+        segments.append({'word':word, 'count':1})
+        splitedStr += word + ' '
+dfSg = pd.DataFrame(segments)
+
+# 词频统计
+dfWord = dfSg.groupby('word')['count'].sum()
+#导出csv
+dfWord.to_csv('keywords.csv',encoding='utf-8')
+
+
+#链接：https://www.jianshu.com/p/f516292d8b9c
+
+
+
+
+
+-----------------------------------------------------
+
+###本次实验，我们学习了如何使用jieba模块进行中文分词与关键字提取，结果各有千秋:
+
+普通分词：需要手工过滤停用词、无意义词、电话号码、符号等，但能较为全面的保留所有关键字。
+TF-IDF：停用词过滤有限，也需要手工处理部分数字、符号；它通过词频抽取关键字，对同一篇文章的词频统计不具有统计意义，多用于宏观上的观测。
+Text Rank: 大概效果同TF-IDF，通过限定词性过滤无关字符，能得到较为工整的关键字结果。
+
